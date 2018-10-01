@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="9.0.002">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="9.0.002" expanded="true" name="Process" origin="GENERATED_TUTORIAL">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="subprocess" compatibility="9.0.002" expanded="true" height="82" name="Subprocess (2)" width="90" x="112" y="136">
+        <process expanded="true">
+          <operator activated="true" class="retrieve" compatibility="9.0.002" expanded="true" height="68" name="Retrieve CustomerCreditRiskData" origin="GENERATED_TUTORIAL" width="90" x="45" y="34">
+            <parameter key="repository_entry" value="//Training Resources/Data/Credit Risk/CustomerCreditRiskData"/>
+          </operator>
+          <operator activated="true" class="select_attributes" compatibility="9.0.002" expanded="true" height="82" name="Select Attributes" origin="GENERATED_TUTORIAL" width="90" x="179" y="34">
+            <parameter key="attribute_filter_type" value="subset"/>
+            <parameter key="attribute" value=""/>
+            <parameter key="attributes" value="age|creditamount|duration|employmentsince"/>
+            <parameter key="use_except_expression" value="false"/>
+            <parameter key="value_type" value="attribute_value"/>
+            <parameter key="use_value_type_exception" value="false"/>
+            <parameter key="except_value_type" value="time"/>
+            <parameter key="block_type" value="attribute_block"/>
+            <parameter key="use_block_type_exception" value="false"/>
+            <parameter key="except_block_type" value="value_matrix_row_start"/>
+            <parameter key="invert_selection" value="false"/>
+            <parameter key="include_special_attributes" value="false"/>
+          </operator>
+          <operator activated="true" class="rename" compatibility="9.0.002" expanded="true" height="82" name="Rename" width="90" x="313" y="34">
+            <parameter key="old_name" value="creditworthy"/>
+            <parameter key="new_name" value="accepted"/>
+            <list key="rename_additional_attributes"/>
+          </operator>
+          <operator activated="true" class="map" compatibility="9.0.002" expanded="true" height="82" name="Map" width="90" x="447" y="34">
+            <parameter key="attribute_filter_type" value="single"/>
+            <parameter key="attribute" value="accepted"/>
+            <parameter key="attributes" value=""/>
+            <parameter key="use_except_expression" value="false"/>
+            <parameter key="value_type" value="attribute_value"/>
+            <parameter key="use_value_type_exception" value="false"/>
+            <parameter key="except_value_type" value="time"/>
+            <parameter key="block_type" value="attribute_block"/>
+            <parameter key="use_block_type_exception" value="false"/>
+            <parameter key="except_block_type" value="value_matrix_row_start"/>
+            <parameter key="invert_selection" value="false"/>
+            <parameter key="include_special_attributes" value="true"/>
+            <list key="value_mappings">
+              <parameter key="Worthy" value="accepted"/>
+            </list>
+            <parameter key="replace_what" value="Not Worthy"/>
+            <parameter key="replace_by" value="not accepted"/>
+            <parameter key="consider_regular_expressions" value="false"/>
+            <parameter key="add_default_mapping" value="false"/>
+          </operator>
+          <connect from_op="Retrieve CustomerCreditRiskData" from_port="output" to_op="Select Attributes" to_port="example set input"/>
+          <connect from_op="Select Attributes" from_port="example set output" to_op="Rename" to_port="example set input"/>
+          <connect from_op="Rename" from_port="example set output" to_op="Map" to_port="example set input"/>
+          <connect from_op="Map" from_port="example set output" to_port="out 1"/>
+          <portSpacing port="source_in 1" spacing="0"/>
+          <portSpacing port="sink_out 1" spacing="0"/>
+          <portSpacing port="sink_out 2" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="true" class="concurrency:cross_validation" compatibility="8.2.000" expanded="true" height="145" name="Validation" origin="GENERATED_TUTORIAL" width="90" x="313" y="136">
+        <parameter key="split_on_batch_attribute" value="false"/>
+        <parameter key="leave_one_out" value="false"/>
+        <parameter key="number_of_folds" value="5"/>
+        <parameter key="sampling_type" value="stratified sampling"/>
+        <parameter key="use_local_random_seed" value="false"/>
+        <parameter key="local_random_seed" value="1992"/>
+        <parameter key="enable_parallel_execution" value="true"/>
+        <process expanded="true">
+          <operator activated="true" class="h2o:generalized_linear_model" compatibility="9.0.000" expanded="true" height="124" name="Generalized Linear Model" origin="GENERATED_TUTORIAL" width="90" x="45" y="34">
+            <parameter key="family" value="AUTO"/>
+            <parameter key="link" value="family_default"/>
+            <parameter key="solver" value="AUTO"/>
+            <parameter key="reproducible" value="false"/>
+            <parameter key="maximum_number_of_threads" value="4"/>
+            <parameter key="use_regularization" value="true"/>
+            <parameter key="lambda_search" value="false"/>
+            <parameter key="number_of_lambdas" value="0"/>
+            <parameter key="lambda_min_ratio" value="0.0"/>
+            <parameter key="early_stopping" value="true"/>
+            <parameter key="stopping_rounds" value="3"/>
+            <parameter key="stopping_tolerance" value="0.001"/>
+            <parameter key="standardize" value="true"/>
+            <parameter key="non-negative_coefficients" value="false"/>
+            <parameter key="add_intercept" value="true"/>
+            <parameter key="compute_p-values" value="false"/>
+            <parameter key="remove_collinear_columns" value="false"/>
+            <parameter key="missing_values_handling" value="MeanImputation"/>
+            <parameter key="max_iterations" value="0"/>
+            <parameter key="specify_beta_constraints" value="false"/>
+            <list key="beta_constraints"/>
+            <parameter key="max_runtime_seconds" value="0"/>
+            <list key="expert_parameters"/>
+          </operator>
+          <connect from_port="training set" to_op="Generalized Linear Model" to_port="training set"/>
+          <connect from_op="Generalized Linear Model" from_port="model" to_port="model"/>
+          <portSpacing port="source_training set" spacing="0"/>
+          <portSpacing port="sink_model" spacing="0"/>
+          <portSpacing port="sink_through 1" spacing="0"/>
+          <description align="left" color="green" colored="true" height="80" resized="true" width="248" x="37" y="137">In the training phase, a model is built on the current training data set. (90 % of data by default, 10 times)</description>
+        </process>
+        <process expanded="true">
+          <operator activated="true" class="apply_model" compatibility="9.0.002" expanded="true" height="82" name="Apply Model" origin="GENERATED_TUTORIAL" width="90" x="45" y="34">
+            <list key="application_parameters"/>
+            <parameter key="create_view" value="false"/>
+          </operator>
+          <operator activated="true" class="performance" compatibility="9.0.002" expanded="true" height="82" name="Performance" origin="GENERATED_TUTORIAL" width="90" x="179" y="34">
+            <parameter key="use_example_weights" value="true"/>
+          </operator>
+          <connect from_port="model" to_op="Apply Model" to_port="model"/>
+          <connect from_port="test set" to_op="Apply Model" to_port="unlabelled data"/>
+          <connect from_op="Apply Model" from_port="labelled data" to_op="Performance" to_port="labelled data"/>
+          <connect from_op="Performance" from_port="performance" to_port="performance 1"/>
+          <connect from_op="Performance" from_port="example set" to_port="test set results"/>
+          <portSpacing port="source_model" spacing="0"/>
+          <portSpacing port="source_test set" spacing="0"/>
+          <portSpacing port="source_through 1" spacing="0"/>
+          <portSpacing port="sink_test set results" spacing="0"/>
+          <portSpacing port="sink_performance 1" spacing="0"/>
+          <portSpacing port="sink_performance 2" spacing="0"/>
+          <description align="left" color="blue" colored="true" height="103" resized="true" width="315" x="38" y="137">The model created in the Training step is applied to the current test set (10 %).&lt;br/&gt;The performance is evaluated and sent to the operator results.</description>
+        </process>
+        <description align="center" color="transparent" colored="false" width="126">Predict Credit Worthyness using a GLM</description>
+      </operator>
+      <operator activated="true" class="filter_example_range" compatibility="9.0.002" expanded="true" height="82" name="Filter Example Range" origin="GENERATED_TUTORIAL" width="90" x="514" y="85">
+        <parameter key="first_example" value="5"/>
+        <parameter key="last_example" value="5"/>
+        <parameter key="invert_filter" value="false"/>
+        <description align="center" color="transparent" colored="false" width="126">Select one Customer to analyize</description>
+      </operator>
+      <operator activated="true" class="prescriptive_analytics:prescriptive_optimization" compatibility="0.1.004" expanded="true" height="124" name="Prescriptive Optimization" origin="GENERATED_TUTORIAL" width="90" x="782" y="136">
+        <parameter key="attribute_filter_type" value="single"/>
+        <parameter key="attribute" value="creditamount"/>
+        <parameter key="attributes" value=""/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="numeric"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="real"/>
+        <parameter key="block_type" value="value_series"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_series_end"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+        <parameter key="optimization_method" value="Grid"/>
+        <parameter key="method_for_start_values" value="input example"/>
+        <parameter key="reference_example_index" value="0"/>
+        <list key="configure_bounds"/>
+        <parameter key="use_interpolation_points_default" value="true"/>
+        <parameter key="number_of_interpolation_points" value="10"/>
+        <parameter key="max_evaluations" value="10000"/>
+        <parameter key="initial_radius" value="10.0"/>
+        <parameter key="stopping_radius" value="1.0E-8"/>
+        <parameter key="max_generations" value="50"/>
+        <parameter key="use_early_stopping" value="false"/>
+        <parameter key="generations_without_improval" value="2"/>
+        <parameter key="specify_population_size" value="true"/>
+        <parameter key="population_size" value="5"/>
+        <parameter key="keep_best" value="true"/>
+        <parameter key="mutation_type" value="gaussian_mutation"/>
+        <parameter key="selection_type" value="tournament"/>
+        <parameter key="tournament_fraction" value="0.25"/>
+        <parameter key="crossover_prob" value="0.9"/>
+        <parameter key="use_local_random_seed" value="false"/>
+        <parameter key="local_random_seed" value="1992"/>
+        <parameter key="show_convergence_plot" value="false"/>
+        <parameter key="steps" value="100"/>
+        <parameter key="cma-es_max_eval" value="10000"/>
+        <parameter key="cma-es_sigma_factor" value="1.0"/>
+        <parameter key="cma-es_population_size" value="5"/>
+        <parameter key="cma-es_stopping_threshold" value="0.001"/>
+        <parameter key="cma-es_active_cma" value="true"/>
+        <parameter key="cma-es_number_of_diagonal_iterations" value="0"/>
+        <process expanded="true">
+          <operator activated="true" class="apply_model" compatibility="9.0.002" expanded="true" height="82" name="Apply Model (2)" origin="GENERATED_TUTORIAL" width="90" x="45" y="136">
+            <list key="application_parameters"/>
+            <parameter key="create_view" value="false"/>
+          </operator>
+          <operator activated="true" class="generate_attributes" compatibility="9.0.002" expanded="true" height="82" name="Generate Attributes" origin="GENERATED_TUTORIAL" width="90" x="246" y="136">
+            <list key="function_descriptions">
+              <parameter key="fitness" value="creditamount-if([confidence(accepted)]&lt;0.75,(0.75-[confidence(accepted)])*1e6,0)"/>
+            </list>
+            <parameter key="keep_all" value="true"/>
+          </operator>
+          <operator activated="true" class="extract_performance" compatibility="9.0.002" expanded="true" height="82" name="Performance (2)" origin="GENERATED_TUTORIAL" width="90" x="380" y="136">
+            <parameter key="performance_type" value="data_value"/>
+            <parameter key="statistics" value="average"/>
+            <parameter key="attribute_name" value="fitness"/>
+            <parameter key="example_index" value="1"/>
+            <parameter key="optimization_direction" value="maximize"/>
+          </operator>
+          <operator activated="true" class="subprocess" compatibility="9.0.002" expanded="true" height="103" name="Subprocess" origin="GENERATED_TUTORIAL" width="90" x="715" y="136">
+            <process expanded="true">
+              <operator activated="true" class="extract_macro" compatibility="9.0.002" expanded="true" height="68" name="Extract Macro" origin="GENERATED_TUTORIAL" width="90" x="45" y="187">
+                <parameter key="macro" value="creditamount"/>
+                <parameter key="macro_type" value="data_value"/>
+                <parameter key="statistics" value="average"/>
+                <parameter key="attribute_name" value="creditamount"/>
+                <parameter key="example_index" value="1"/>
+                <list key="additional_macros"/>
+              </operator>
+              <operator activated="true" class="provide_macro_as_log_value" compatibility="9.0.002" expanded="true" height="82" name="Provide Macro as Log Value" origin="GENERATED_TUTORIAL" width="90" x="179" y="187">
+                <parameter key="macro_name" value="creditamount"/>
+              </operator>
+              <operator activated="true" class="log" compatibility="9.0.002" expanded="true" height="82" name="Log" origin="GENERATED_TUTORIAL" width="90" x="246" y="34">
+                <list key="log">
+                  <parameter key="performance" value="operator.Performance (2).value.performance"/>
+                  <parameter key="iteration" value="operator.Performance (2).value.applycount"/>
+                  <parameter key="credit amount" value="operator.Provide Macro as Log Value.value.macro_value"/>
+                </list>
+                <parameter key="sorting_type" value="none"/>
+                <parameter key="sorting_k" value="100"/>
+                <parameter key="persistent" value="false"/>
+              </operator>
+              <connect from_port="in 1" to_op="Extract Macro" to_port="example set"/>
+              <connect from_port="in 2" to_op="Log" to_port="through 1"/>
+              <connect from_op="Extract Macro" from_port="example set" to_op="Provide Macro as Log Value" to_port="through 1"/>
+              <connect from_op="Log" from_port="through 1" to_port="out 1"/>
+              <portSpacing port="source_in 1" spacing="0"/>
+              <portSpacing port="source_in 2" spacing="0"/>
+              <portSpacing port="source_in 3" spacing="0"/>
+              <portSpacing port="sink_out 1" spacing="0"/>
+              <portSpacing port="sink_out 2" spacing="0"/>
+            </process>
+          </operator>
+          <connect from_port="training set" to_op="Apply Model (2)" to_port="unlabelled data"/>
+          <connect from_port="in 1" to_op="Apply Model (2)" to_port="model"/>
+          <connect from_op="Apply Model (2)" from_port="labelled data" to_op="Generate Attributes" to_port="example set input"/>
+          <connect from_op="Generate Attributes" from_port="example set output" to_op="Performance (2)" to_port="example set"/>
+          <connect from_op="Performance (2)" from_port="performance" to_op="Subprocess" to_port="in 2"/>
+          <connect from_op="Performance (2)" from_port="example set" to_op="Subprocess" to_port="in 1"/>
+          <connect from_op="Subprocess" from_port="out 1" to_port="Performance Vector"/>
+          <portSpacing port="source_training set" spacing="84"/>
+          <portSpacing port="source_in 1" spacing="21"/>
+          <portSpacing port="source_in 2" spacing="0"/>
+          <portSpacing port="sink_Performance Vector" spacing="0"/>
+          <description align="center" color="orange" colored="true" height="289" resized="true" width="464" x="155" y="14">Create a custom fitness function. The fitness increases with more credit amount. It has a penalty if the likelihood for worthy is less than 0.75</description>
+          <description align="center" color="green" colored="true" height="290" resized="true" width="143" x="10" y="10">Apply the Model</description>
+          <description align="center" color="yellow" colored="false" height="291" resized="true" width="227" x="619" y="13">Log intermediate steps</description>
+        </process>
+      </operator>
+      <connect from_op="Subprocess (2)" from_port="out 1" to_op="Validation" to_port="example set"/>
+      <connect from_op="Validation" from_port="model" to_op="Prescriptive Optimization" to_port="in 1"/>
+      <connect from_op="Validation" from_port="example set" to_op="Filter Example Range" to_port="example set input"/>
+      <connect from_op="Filter Example Range" from_port="example set output" to_op="Prescriptive Optimization" to_port="example set input"/>
+      <connect from_op="Filter Example Range" from_port="original" to_op="Prescriptive Optimization" to_port="ref"/>
+      <connect from_op="Prescriptive Optimization" from_port="exa" to_port="result 1"/>
+      <connect from_op="Prescriptive Optimization" from_port="per" to_port="result 2"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <portSpacing port="sink_result 3" spacing="0"/>
+      <description align="center" color="blue" colored="true" height="382" resized="true" width="224" x="10" y="17">Get Example Data</description>
+      <description align="center" color="yellow" colored="false" height="382" resized="false" width="224" x="235" y="15">Predict Credit Acceptance with a GLM</description>
+      <description align="center" color="blue" colored="true" height="382" resized="false" width="224" x="459" y="14">Select One Customer to Optimize</description>
+      <description align="center" color="green" colored="true" height="383" resized="true" width="256" x="684" y="12">Use a Grid search to find the maximum credit amount which still has 0.75 confidence(accepted)</description>
+    </process>
+  </operator>
+</process>
