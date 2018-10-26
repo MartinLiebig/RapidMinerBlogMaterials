@@ -2,6 +2,7 @@ package com.rapidminer.extension.process_investigation.operator;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import com.rapidminer.Process;
 import com.rapidminer.operator.IOObjectCollection;
@@ -9,11 +10,17 @@ import com.rapidminer.operator.Operator;
 import com.rapidminer.operator.OperatorDescription;
 import com.rapidminer.operator.ports.OutputPort;
 import com.rapidminer.operator.text.Document;
+import com.rapidminer.parameter.ParameterType;
+import com.rapidminer.parameter.ParameterTypeDirectory;
+import com.rapidminer.parameter.ParameterTypeFile;
+import com.rapidminer.parameter.UndefinedParameterError;
 import com.rapidminer.tools.OperatorService;
 import com.rapidminer.tools.XMLException;
 
 
 public class ProcessToDocument extends Operator {
+
+	public final static String PARAMETER_DIRECTORY = "directory";
 
 	OutputPort docOut = getOutputPorts().createPort("docs");
 
@@ -32,8 +39,9 @@ public class ProcessToDocument extends Operator {
 		super(description);
 	}
 
-	public void doWork() {
-		String myDirectoryPath = "C:\\Users\\MartinSchmitz\\.RapidMiner\\repositories\\Local Repository\\Customer Success";
+	public void doWork() throws UndefinedParameterError {
+		//String myDirectoryPath = "C:\\Users\\MartinSchmitz\\.RapidMiner\\repositories\\Local Repository\\Customer Success";
+		String myDirectoryPath = getParameterAsString(PARAMETER_DIRECTORY);
 		File f = new File(myDirectoryPath);
 
 		IOObjectCollection<Document> outputCollection = new IOObjectCollection<>();
@@ -68,5 +76,12 @@ public class ProcessToDocument extends Operator {
 				}
 			}
 		}
+	}
+	@Override
+	public List<ParameterType> getParameterTypes() {
+		List<ParameterType> types = super.getParameterTypes();
+
+		types.add(new ParameterTypeDirectory(PARAMETER_DIRECTORY,"Directory of your repository",false));
+		return types;
 	}
 }
