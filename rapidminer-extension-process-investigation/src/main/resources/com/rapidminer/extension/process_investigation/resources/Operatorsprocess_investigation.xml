@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<operators name="process_investigation" version="6.0" docbundle="com/rapidminer/extension/process_investigation/resources/i18n/OperatorsDocprocess_investigation">
+    <group key="">
+        <!-- This is an example how to specify Operators and Operator groups. The Operator groups define
+                where Operators will be located in the Operator tree. -->
+        <!--
+        <group key="example_group">
+           <operator>
+              <key>example_operator_key</key>
+              <class>com.rapidminer.extension.process_investigation.operator.OperatorClass</class>
+           </operator>
+         </group>
+         -->
+        <operator>
+            <key>process_to_documents</key>
+            <class>com.rapidminer.extension.process_investigation.operator.ProcessToDocument</class>
+        </operator>
+    </group>
+</operators>
