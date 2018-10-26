@@ -14,6 +14,7 @@ import com.rapidminer.parameter.ParameterType;
 import com.rapidminer.parameter.ParameterTypeDirectory;
 import com.rapidminer.parameter.ParameterTypeFile;
 import com.rapidminer.parameter.UndefinedParameterError;
+import com.rapidminer.tools.Ontology;
 import com.rapidminer.tools.OperatorService;
 import com.rapidminer.tools.XMLException;
 
@@ -65,7 +66,9 @@ public class ProcessToDocument extends Operator {
 							for (Operator o : p.getAllOperators()) {
 								sb.append(o.getClass().toString() + "\n");
 							}
-							output.add(new Document(sb.toString()));
+							Document doc = new Document((sb.toString()));
+							doc.addMetaData("path",f.toString(),Ontology.NOMINAL);
+							output.add(doc);
 						} catch (IOException e) {
 							e.printStackTrace();
 						} catch (XMLException e) {
