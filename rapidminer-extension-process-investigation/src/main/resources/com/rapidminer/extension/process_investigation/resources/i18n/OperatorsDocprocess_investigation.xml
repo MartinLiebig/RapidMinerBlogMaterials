@@ -15,5 +15,8 @@
       <name>Example Group</name>
     </group>
     -->
-
+    <operator>
+        <key>process_to_documents</key>
+        <name>Process XML to Documents</name>
+    </operator>
 </operatorHelp>
