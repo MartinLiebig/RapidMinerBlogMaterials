@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><process version="9.0.003">
+<?xml version="1.0" encoding="UTF-8"?><process version="9.1.000-BETA2">
   <context>
     <input/>
     <output/>
@@ -9,7 +9,7 @@
       </macro>
     </macros>
   </context>
-  <operator activated="true" class="process" compatibility="9.0.003" expanded="true" name="Process">
+  <operator activated="true" class="process" compatibility="9.1.000-BETA2" expanded="true" name="Process">
     <parameter key="logverbosity" value="init"/>
     <parameter key="random_seed" value="2001"/>
     <parameter key="send_mail" value="never"/>
@@ -17,7 +17,7 @@
     <parameter key="process_duration_for_mail" value="30"/>
     <parameter key="encoding" value="SYSTEM"/>
     <process expanded="true">
-      <operator activated="true" class="loop_repository" compatibility="9.0.003" expanded="true" height="82" name="Loop Repository" width="90" x="179" y="187">
+      <operator activated="true" class="loop_repository" compatibility="9.1.000-BETA2" expanded="true" height="82" name="Loop Repository" width="90" x="179" y="187">
         <parameter key="repository_folder" value="../results/"/>
         <parameter key="entry_type" value="IOObject"/>
         <parameter key="filter" value=".*topics.*"/>
@@ -34,15 +34,16 @@
           <portSpacing port="sink_out 2" spacing="0"/>
         </process>
       </operator>
-      <operator activated="true" class="loop_collection" compatibility="9.0.003" expanded="true" height="82" name="Loop Collection" width="90" x="581" y="187">
+      <operator activated="true" class="loop_collection" compatibility="9.1.000-BETA2" expanded="true" height="82" name="Loop Collection" width="90" x="581" y="187">
         <parameter key="set_iteration_macro" value="false"/>
         <parameter key="macro_name" value="iteration"/>
         <parameter key="macro_start_value" value="1"/>
         <parameter key="unfold" value="false"/>
         <process expanded="true">
-          <operator activated="true" class="open_file" compatibility="9.0.003" expanded="true" height="68" name="Open File" width="90" x="112" y="85">
-            <parameter key="resource_type" value="file"/>
+          <operator activated="true" class="open_file" compatibility="9.1.000-BETA2" expanded="true" height="68" name="Open File" width="90" x="112" y="85">
+            <parameter key="resource_type" value="URL"/>
             <parameter key="filename" value="C:\Users\MartinSchmitz\Documents\RapidMinerBlogMaterials\charting\run_wordcloud.py"/>
+            <parameter key="url" value="https://raw.githubusercontent.com/MartinSchmitzDo/RapidMinerBlogMaterials/feature/LDABlogPost/charting/run_wordcloud.py"/>
           </operator>
           <operator activated="true" class="python_scripting:execute_python" compatibility="8.2.000" expanded="true" height="103" name="Execute Python" width="90" x="447" y="136">
             <parameter key="script" value="import pandas&#10;&#10;# rm_main is a mandatory function, &#10;# the number of arguments has to be the number of input ports (can be none)&#10;def rm_main(data):&#10;    print('Hello, world!')&#10;    # output can be found in Log View&#10;    print(type(data))&#10;&#10;    #your code goes here&#10;&#10;    #for example:&#10;    data2 = pandas.DataFrame([3,5,77,8])&#10;&#10;    # connect 2 output ports to see the results&#10;    return data, data2"/>
