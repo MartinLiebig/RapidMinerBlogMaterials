@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="9.0.003">
+  <context>
+    <input/>
+    <output/>
+    <macros>
+      <macro>
+        <key>suffix</key>
+        <value/>
+      </macro>
+      <macro>
+        <key>topics</key>
+        <value>12</value>
+      </macro>
+    </macros>
+  </context>
+  <operator activated="true" class="process" compatibility="9.0.003" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="retrieve" compatibility="9.0.003" expanded="true" height="68" name="Retrieve prepped data sampled" width="90" x="179" y="136">
+        <parameter key="repository_entry" value="../data/prepped data sampled"/>
+      </operator>
+      <operator activated="true" class="concurrency:loop_parameters" compatibility="9.0.003" expanded="true" height="82" name="Loop Parameters" width="90" x="380" y="136">
+        <list key="parameters">
+          <parameter key="Set Macro.value" value="6,8,10,12"/>
+        </list>
+        <parameter key="error_handling" value="fail on error"/>
+        <parameter key="log_performance" value="true"/>
+        <parameter key="log_all_criteria" value="false"/>
+        <parameter key="synchronize" value="false"/>
+        <parameter key="enable_parallel_execution" value="true"/>
+        <process expanded="true">
+          <operator activated="true" class="set_macro" compatibility="9.0.003" expanded="true" height="82" name="Set Macro" width="90" x="112" y="238">
+            <parameter key="macro" value="topics"/>
+            <parameter key="value" value="10"/>
+          </operator>
+          <operator activated="true" class="operator_toolbox:lda" compatibility="1.7.000-SNAPSHOT" expanded="true" height="124" name="Extract Topics from Document (LDA)" width="90" x="313" y="238">
+            <parameter key="number_of_topics" value="%{topics}"/>
+            <parameter key="use_alpha_heuristics" value="true"/>
+            <parameter key="alpha_sum" value="0.1"/>
+            <parameter key="use_beta_heuristics" value="true"/>
+            <parameter key="beta" value="0.01"/>
+            <parameter key="optimize_hyperparameters" value="true"/>
+            <parameter key="optimize_interval_for_hyperparameters" value="12"/>
+            <parameter key="top_words_per_topic" value="20"/>
+            <parameter key="iterations" value="1000"/>
+            <parameter key="reproducible" value="false"/>
+            <parameter key="enable_logging" value="false"/>
+            <parameter key="use_local_random_seed" value="false"/>
+            <parameter key="local_random_seed" value="1992"/>
+            <parameter key="include_meta_data" value="true"/>
+          </operator>
+          <operator activated="true" class="store" compatibility="9.0.003" expanded="true" height="68" name="Store (4)" width="90" x="514" y="442">
+            <parameter key="repository_entry" value="../results/%{topics}/performance %{suffix}"/>
+          </operator>
+          <operator activated="true" class="store" compatibility="9.0.003" expanded="true" height="68" name="Store (3)" width="90" x="514" y="340">
+            <parameter key="repository_entry" value="../results/%{topics}/model %{suffix}"/>
+          </operator>
+          <operator activated="true" class="store" compatibility="9.0.003" expanded="true" height="68" name="Store" width="90" x="514" y="136">
+            <parameter key="repository_entry" value="../results/%{topics}/scored set %{suffix}"/>
+          </operator>
+          <operator activated="true" class="store" compatibility="9.0.003" expanded="true" height="68" name="Store (2)" width="90" x="514" y="238">
+            <parameter key="repository_entry" value="../results/%{topics}/topics %{suffix}"/>
+          </operator>
+          <connect from_port="input 1" to_op="Set Macro" to_port="through 1"/>
+          <connect from_op="Set Macro" from_port="through 1" to_op="Extract Topics from Document (LDA)" to_port="col"/>
+          <connect from_op="Extract Topics from Document (LDA)" from_port="exa" to_op="Store" to_port="input"/>
+          <connect from_op="Extract Topics from Document (LDA)" from_port="top" to_op="Store (2)" to_port="input"/>
+          <connect from_op="Extract Topics from Document (LDA)" from_port="mod" to_op="Store (3)" to_port="input"/>
+          <connect from_op="Extract Topics from Document (LDA)" from_port="per" to_op="Store (4)" to_port="input"/>
+          <portSpacing port="source_input 1" spacing="189"/>
+          <portSpacing port="source_input 2" spacing="21"/>
+          <portSpacing port="sink_performance" spacing="0"/>
+          <portSpacing port="sink_output 1" spacing="0"/>
+          <description align="center" color="yellow" colored="false" height="531" resized="true" width="211" x="61" y="10">Set the number of desired topics. Doing this that way makes it easier to write results to different places</description>
+          <description align="center" color="green" colored="true" height="532" resized="true" width="178" x="268" y="10">The main LDA!</description>
+          <description align="center" color="blue" colored="true" height="533" resized="true" width="339" x="447" y="10">Store results in&lt;br&gt;../results/%{topics}/... %{suffix}&lt;br/&gt;&lt;br/&gt;suffix can be used to store new resuts without overwriting</description>
+        </process>
+      </operator>
+      <connect from_op="Retrieve prepped data sampled" from_port="output" to_op="Loop Parameters" to_port="input 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <description align="center" color="blue" colored="true" height="272" resized="true" width="213" x="120" y="52">Read the preprocessed data</description>
+      <description align="center" color="yellow" colored="false" height="272" resized="false" width="213" x="332" y="52">Run LDA with different parameters</description>
+    </process>
+  </operator>
+</process>

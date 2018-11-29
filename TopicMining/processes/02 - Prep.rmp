@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="9.0.003">
+  <context>
+    <input/>
+    <output/>
+    <macros>
+      <macro>
+        <key/>
+        <value/>
+      </macro>
+    </macros>
+  </context>
+  <operator activated="true" class="process" compatibility="9.0.003" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="retrieve" compatibility="9.0.003" expanded="true" height="68" name="Retrieve raw data sampled" width="90" x="45" y="136">
+        <parameter key="repository_entry" value="../data/raw data sampled"/>
+      </operator>
+      <operator activated="true" class="subprocess" compatibility="9.0.003" expanded="true" height="82" name="Subprocess" width="90" x="246" y="136">
+        <process expanded="true">
+          <operator activated="true" class="retrieve" compatibility="9.0.003" expanded="true" height="68" name="Retrieve word list exa" width="90" x="45" y="187">
+            <parameter key="repository_entry" value="//Local Repository/Blog/FineFoodMedium/processes/subprocesses/word list exa"/>
+          </operator>
+          <operator activated="true" class="filter_examples" compatibility="9.0.003" expanded="true" height="103" name="Filter Examples" width="90" x="179" y="187">
+            <parameter key="parameter_expression" value=""/>
+            <parameter key="condition_class" value="custom_filters"/>
+            <parameter key="invert_filter" value="false"/>
+            <list key="filters_list">
+              <parameter key="filters_entry_key" value="in documents.gt.50"/>
+            </list>
+            <parameter key="filters_logic_and" value="true"/>
+            <parameter key="filters_check_metadata" value="true"/>
+          </operator>
+          <operator activated="true" class="publish_to_app" compatibility="9.0.003" expanded="true" height="68" name="Publish to App" width="90" x="313" y="187">
+            <parameter key="name" value="keepList"/>
+          </operator>
+          <operator activated="true" class="replace" compatibility="9.0.003" expanded="true" height="82" name="Replace" width="90" x="581" y="34">
+            <parameter key="attribute_filter_type" value="single"/>
+            <parameter key="attribute" value="Text"/>
+            <parameter key="attributes" value=""/>
+            <parameter key="use_except_expression" value="false"/>
+            <parameter key="value_type" value="nominal"/>
+            <parameter key="use_value_type_exception" value="false"/>
+            <parameter key="except_value_type" value="file_path"/>
+            <parameter key="block_type" value="single_value"/>
+            <parameter key="use_block_type_exception" value="false"/>
+            <parameter key="except_block_type" value="single_value"/>
+            <parameter key="invert_selection" value="false"/>
+            <parameter key="include_special_attributes" value="false"/>
+            <parameter key="replace_what" value="&lt;a href=&quot;http://www.amazon.com/.+&quot;&gt;"/>
+            <parameter key="replace_by" value="amazonlink "/>
+            <description align="center" color="transparent" colored="false" width="126">Remove AmazonLinks</description>
+          </operator>
+          <connect from_port="in 1" to_op="Replace" to_port="example set input"/>
+          <connect from_op="Retrieve word list exa" from_port="output" to_op="Filter Examples" to_port="example set input"/>
+          <connect from_op="Filter Examples" from_port="example set output" to_op="Publish to App" to_port="store"/>
+          <connect from_op="Replace" from_port="example set output" to_port="out 1"/>
+          <portSpacing port="source_in 1" spacing="0"/>
+          <portSpacing port="source_in 2" spacing="0"/>
+          <portSpacing port="sink_out 1" spacing="0"/>
+          <portSpacing port="sink_out 2" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="true" class="nominal_to_text" compatibility="9.0.003" expanded="true" height="82" name="Nominal to Text" width="90" x="514" y="136">
+        <parameter key="attribute_filter_type" value="single"/>
+        <parameter key="attribute" value="Text"/>
+        <parameter key="attributes" value=""/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="nominal"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="file_path"/>
+        <parameter key="block_type" value="single_value"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="single_value"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+      </operator>
+      <operator activated="true" class="text:data_to_documents" compatibility="9.1.000-SNAPSHOT" expanded="true" height="68" name="Data to Documents" width="90" x="648" y="136">
+        <parameter key="select_attributes_and_weights" value="false"/>
+        <list key="specify_weights"/>
+      </operator>
+      <operator activated="true" class="loop_collection" compatibility="9.0.003" expanded="true" height="82" name="Loop Collection" width="90" x="782" y="136">
+        <parameter key="set_iteration_macro" value="false"/>
+        <parameter key="macro_name" value="iteration"/>
+        <parameter key="macro_start_value" value="1"/>
+        <parameter key="unfold" value="false"/>
+        <process expanded="true">
+          <operator activated="true" class="text:tokenize" compatibility="9.1.000-SNAPSHOT" expanded="true" height="68" name="Tokenize" width="90" x="112" y="136">
+            <parameter key="mode" value="non letters"/>
+            <parameter key="characters" value=".:"/>
+            <parameter key="language" value="English"/>
+            <parameter key="max_token_length" value="3"/>
+          </operator>
+          <operator activated="true" class="text:transform_cases" compatibility="9.1.000-SNAPSHOT" expanded="true" height="68" name="Transform Cases" width="90" x="246" y="136">
+            <parameter key="transform_to" value="lower case"/>
+          </operator>
+          <operator activated="true" class="text:filter_stopwords_english" compatibility="9.1.000-SNAPSHOT" expanded="true" height="68" name="Filter Stopwords (English)" width="90" x="447" y="136"/>
+          <operator activated="true" class="recall_from_app" compatibility="9.0.003" expanded="true" height="82" name="Recall from App" width="90" x="648" y="238">
+            <parameter key="name" value="keepList"/>
+            <parameter key="remove_from_app" value="false"/>
+          </operator>
+          <operator activated="true" class="operator_toolbox:filter_tokens_using_exampleset" compatibility="1.7.000-SNAPSHOT" expanded="true" height="82" name="Filter Tokens Using ExampleSet" width="90" x="782" y="136">
+            <parameter key="attribute" value="word"/>
+            <parameter key="case_sensitive" value="false"/>
+            <parameter key="invert_filter" value="true"/>
+          </operator>
+          <connect from_port="single" to_op="Tokenize" to_port="document"/>
+          <connect from_op="Tokenize" from_port="document" to_op="Transform Cases" to_port="document"/>
+          <connect from_op="Transform Cases" from_port="document" to_op="Filter Stopwords (English)" to_port="document"/>
+          <connect from_op="Filter Stopwords (English)" from_port="document" to_op="Filter Tokens Using ExampleSet" to_port="document"/>
+          <connect from_op="Recall from App" from_port="result" to_op="Filter Tokens Using ExampleSet" to_port="example set"/>
+          <connect from_op="Filter Tokens Using ExampleSet" from_port="document" to_port="output 1"/>
+          <portSpacing port="source_single" spacing="105"/>
+          <portSpacing port="sink_output 1" spacing="0"/>
+          <portSpacing port="sink_output 2" spacing="0"/>
+          <description align="center" color="gray" colored="true" height="269" resized="true" width="171" x="41" y="57">To filter words we need to tokenize first</description>
+          <description align="center" color="green" colored="true" height="270" resized="true" width="148" x="211" y="58">Make everything lower case</description>
+          <description align="center" color="yellow" colored="true" height="275" resized="true" width="220" x="356" y="55">Remove stopwords for English</description>
+          <description align="center" color="orange" colored="true" height="276" resized="true" width="382" x="576" y="54">Only keep frequent words. By default we take all words which are occuring more than 50 times.</description>
+        </process>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.0.003" expanded="true" height="68" name="Store" width="90" x="983" y="136">
+        <parameter key="repository_entry" value="../data/prepped data sampled"/>
+      </operator>
+      <connect from_op="Retrieve raw data sampled" from_port="output" to_op="Subprocess" to_port="in 1"/>
+      <connect from_op="Subprocess" from_port="out 1" to_op="Nominal to Text" to_port="example set input"/>
+      <connect from_op="Nominal to Text" from_port="example set output" to_op="Data to Documents" to_port="example set"/>
+      <connect from_op="Data to Documents" from_port="documents" to_op="Loop Collection" to_port="collection"/>
+      <connect from_op="Loop Collection" from_port="output 1" to_op="Store" to_port="input"/>
+      <connect from_op="Store" from_port="through" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <description align="center" color="orange" colored="true" height="250" resized="true" width="409" x="11" y="45">Get the review data and the list of words we want too keep.&lt;br&gt;The full list is generated using subprocesses/Generate Filter List</description>
+      <description align="center" color="yellow" colored="false" height="254" resized="true" width="477" x="419" y="42">Do the Preprocessing. Main changes are done in this 'Loop Collection</description>
+      <description align="center" color="blue" colored="true" height="251" resized="true" width="243" x="897" y="43">Store the Results</description>
+    </process>
+  </operator>
+</process>

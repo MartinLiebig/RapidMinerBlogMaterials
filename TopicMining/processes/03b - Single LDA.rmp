@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="9.0.003">
+  <context>
+    <input/>
+    <output/>
+    <macros>
+      <macro>
+        <key>suffix</key>
+        <value>test</value>
+      </macro>
+      <macro>
+        <key>topics</key>
+        <value>12</value>
+      </macro>
+    </macros>
+  </context>
+  <operator activated="true" class="process" compatibility="9.0.003" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="false" class="retrieve" compatibility="9.0.003" expanded="true" height="68" name="Retrieve prepped data" width="90" x="179" y="442">
+        <parameter key="repository_entry" value="//Local Repository/Blog/FineFoodMedium/data/prepped data"/>
+      </operator>
+      <operator activated="true" class="retrieve" compatibility="9.0.003" expanded="true" height="68" name="Retrieve prepped data sampled" width="90" x="45" y="85">
+        <parameter key="repository_entry" value="../data/prepped data sampled"/>
+      </operator>
+      <operator activated="true" class="operator_toolbox:lda" compatibility="1.7.000-SNAPSHOT" expanded="true" height="124" name="Extract Topics from Document (LDA)" width="90" x="246" y="85">
+        <parameter key="number_of_topics" value="%{topics}"/>
+        <parameter key="use_alpha_heuristics" value="true"/>
+        <parameter key="alpha_sum" value="0.1"/>
+        <parameter key="use_beta_heuristics" value="true"/>
+        <parameter key="beta" value="0.01"/>
+        <parameter key="optimize_hyperparameters" value="true"/>
+        <parameter key="optimize_interval_for_hyperparameters" value="12"/>
+        <parameter key="top_words_per_topic" value="20"/>
+        <parameter key="iterations" value="1000"/>
+        <parameter key="reproducible" value="false"/>
+        <parameter key="enable_logging" value="false"/>
+        <parameter key="use_local_random_seed" value="false"/>
+        <parameter key="local_random_seed" value="1992"/>
+        <parameter key="include_meta_data" value="true"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.0.003" expanded="true" height="68" name="Store (4)" width="90" x="447" y="391">
+        <parameter key="repository_entry" value="../results/%{topics}/performance %{suffix}"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.0.003" expanded="true" height="68" name="Store (3)" width="90" x="447" y="289">
+        <parameter key="repository_entry" value="../results/%{topics}/model %{suffix}"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.0.003" expanded="true" height="68" name="Store" width="90" x="447" y="34">
+        <parameter key="repository_entry" value="../results/%{topics}/scored set %{suffix}"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.0.003" expanded="true" height="68" name="Store (2)" width="90" x="447" y="136">
+        <parameter key="repository_entry" value="../results/%{topics}/topics %{suffix}"/>
+      </operator>
+      <connect from_op="Retrieve prepped data sampled" from_port="output" to_op="Extract Topics from Document (LDA)" to_port="col"/>
+      <connect from_op="Extract Topics from Document (LDA)" from_port="exa" to_op="Store" to_port="input"/>
+      <connect from_op="Extract Topics from Document (LDA)" from_port="top" to_op="Store (2)" to_port="input"/>
+      <connect from_op="Extract Topics from Document (LDA)" from_port="mod" to_op="Store (3)" to_port="input"/>
+      <connect from_op="Extract Topics from Document (LDA)" from_port="per" to_op="Store (4)" to_port="input"/>
+      <connect from_op="Store" from_port="through" to_port="result 1"/>
+      <connect from_op="Store (2)" from_port="through" to_port="result 2"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <portSpacing port="sink_result 3" spacing="0"/>
+    </process>
+  </operator>
+</process>

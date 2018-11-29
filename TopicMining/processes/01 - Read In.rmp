@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="9.0.003">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="9.0.003" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" breakpoints="after" class="read_csv" compatibility="9.0.003" expanded="true" height="68" name="Read CSV" width="90" x="45" y="136">
+        <parameter key="csv_file" value="C:\Users\MartinSchmitz\OneDrive - RapidMiner\Work\Internal Projects\Medium\Reviews.csv"/>
+        <parameter key="column_separators" value=","/>
+        <parameter key="trim_lines" value="false"/>
+        <parameter key="use_quotes" value="true"/>
+        <parameter key="quotes_character" value="&quot;"/>
+        <parameter key="escape_character" value="\"/>
+        <parameter key="skip_comments" value="true"/>
+        <parameter key="comment_characters" value="#"/>
+        <parameter key="starting_row" value="1"/>
+        <parameter key="parse_numbers" value="true"/>
+        <parameter key="decimal_character" value="."/>
+        <parameter key="grouped_digits" value="false"/>
+        <parameter key="grouping_character" value=","/>
+        <parameter key="infinity_representation" value=""/>
+        <parameter key="date_format" value="MMM d, yyyy h:mm:ss a z"/>
+        <parameter key="first_row_as_names" value="true"/>
+        <list key="annotations"/>
+        <parameter key="time_zone" value="SYSTEM"/>
+        <parameter key="locale" value="English (United States)"/>
+        <parameter key="encoding" value="windows-1252"/>
+        <parameter key="read_all_values_as_polynominal" value="false"/>
+        <list key="data_set_meta_data_information">
+          <parameter key="0" value="Id.true.integer.attribute"/>
+          <parameter key="1" value="ProductId.true.polynominal.attribute"/>
+          <parameter key="2" value="UserId.true.polynominal.attribute"/>
+          <parameter key="3" value="ProfileName.true.polynominal.attribute"/>
+          <parameter key="4" value="HelpfulnessNumerator.true.integer.attribute"/>
+          <parameter key="5" value="HelpfulnessDenominator.true.integer.attribute"/>
+          <parameter key="6" value="Score.true.integer.attribute"/>
+          <parameter key="7" value="Time.true.integer.attribute"/>
+          <parameter key="8" value="Summary.true.polynominal.attribute"/>
+          <parameter key="9" value="Text.true.polynominal.attribute"/>
+        </list>
+        <parameter key="read_not_matching_values_as_missings" value="false"/>
+        <parameter key="datamanagement" value="double_array"/>
+        <parameter key="data_management" value="auto"/>
+      </operator>
+      <operator activated="true" class="sample" compatibility="9.0.003" expanded="true" height="82" name="Sample" width="90" x="246" y="136">
+        <parameter key="sample" value="absolute"/>
+        <parameter key="balance_data" value="false"/>
+        <parameter key="sample_size" value="10000"/>
+        <parameter key="sample_ratio" value="0.1"/>
+        <parameter key="sample_probability" value="0.1"/>
+        <list key="sample_size_per_class"/>
+        <list key="sample_ratio_per_class"/>
+        <list key="sample_probability_per_class"/>
+        <parameter key="use_local_random_seed" value="false"/>
+        <parameter key="local_random_seed" value="1992"/>
+      </operator>
+      <operator activated="true" class="remove_unused_values" compatibility="9.0.003" expanded="true" height="103" name="Remove Unused Values" width="90" x="447" y="85">
+        <parameter key="return_preprocessing_model" value="false"/>
+        <parameter key="create_view" value="false"/>
+        <parameter key="attribute_filter_type" value="all"/>
+        <parameter key="attribute" value=""/>
+        <parameter key="attributes" value=""/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="nominal"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="file_path"/>
+        <parameter key="block_type" value="single_value"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="single_value"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+        <parameter key="sort_alphabetically" value="true"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.0.003" expanded="true" height="68" name="Store (2)" width="90" x="581" y="238">
+        <parameter key="repository_entry" value="../data/raw data sampled"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.0.003" expanded="true" height="68" name="Store" width="90" x="581" y="85">
+        <parameter key="repository_entry" value="../data/raw data sampled"/>
+      </operator>
+      <connect from_op="Read CSV" from_port="output" to_op="Sample" to_port="example set input"/>
+      <connect from_op="Sample" from_port="example set output" to_op="Remove Unused Values" to_port="example set input"/>
+      <connect from_op="Sample" from_port="original" to_op="Store (2)" to_port="input"/>
+      <connect from_op="Remove Unused Values" from_port="example set output" to_op="Store" to_port="input"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <description align="center" color="green" colored="true" height="153" resized="true" width="313" x="391" y="61">Store the sampled version</description>
+      <description align="center" color="blue" colored="true" height="124" resized="false" width="315" x="388" y="212">Store the full version</description>
+      <description align="center" color="orange" colored="true" height="275" resized="true" width="183" x="18" y="62">Read the File. &lt;br/&gt;Change the path to your local path!</description>
+      <description align="center" color="yellow" colored="false" height="277" resized="true" width="196" x="200" y="61">Sample down to 10.000 rows</description>
+      <description align="center" color="purple" colored="true" height="109" resized="true" width="688" x="17" y="335">Process Reading the data from CSV, sampling it and storing both versions locally.&lt;br/&gt;&lt;br/&gt;The data is available at:&lt;br&gt;https://www.kaggle.com/snap/amazon-fine-food-reviews</description>
+      <description align="center" color="yellow" colored="false" height="141" resized="true" width="305" x="713" y="62">The &amp;quot;Remove Unused Values&amp;quot; operator removes the unnecesarry texts from the meta data as well. This reduces the size by a lot.</description>
+    </process>
+  </operator>
+</process>

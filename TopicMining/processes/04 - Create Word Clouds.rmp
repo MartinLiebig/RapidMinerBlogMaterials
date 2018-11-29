@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="9.0.003">
+  <context>
+    <input/>
+    <output/>
+    <macros>
+      <macro>
+        <key>name</key>
+        <value>RMTopic</value>
+      </macro>
+    </macros>
+  </context>
+  <operator activated="true" class="process" compatibility="9.0.003" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="loop_repository" compatibility="9.0.003" expanded="true" height="82" name="Loop Repository" width="90" x="179" y="187">
+        <parameter key="repository_folder" value="../results/"/>
+        <parameter key="entry_type" value="IOObject"/>
+        <parameter key="filter" value=".*topics.*"/>
+        <parameter key="filtered_string" value="file name (last part of the path)"/>
+        <parameter key="entry_name_macro" value="entry_name"/>
+        <parameter key="repository_path_macro" value="repository_path"/>
+        <parameter key="parent_folder_macro" value="parent_folder"/>
+        <parameter key="recursive" value="true"/>
+        <process expanded="true">
+          <connect from_port="repository object" to_port="out 1"/>
+          <portSpacing port="source_repository object" spacing="0"/>
+          <portSpacing port="source_in 1" spacing="0"/>
+          <portSpacing port="sink_out 1" spacing="0"/>
+          <portSpacing port="sink_out 2" spacing="0"/>
+        </process>
+      </operator>
+      <operator activated="true" class="loop_collection" compatibility="9.0.003" expanded="true" height="82" name="Loop Collection" width="90" x="581" y="187">
+        <parameter key="set_iteration_macro" value="false"/>
+        <parameter key="macro_name" value="iteration"/>
+        <parameter key="macro_start_value" value="1"/>
+        <parameter key="unfold" value="false"/>
+        <process expanded="true">
+          <operator activated="true" class="open_file" compatibility="9.0.003" expanded="true" height="68" name="Open File" width="90" x="112" y="85">
+            <parameter key="resource_type" value="file"/>
+            <parameter key="filename" value="C:\Users\MartinSchmitz\Documents\RapidMinerBlogMaterials\charting\run_wordcloud.py"/>
+          </operator>
+          <operator activated="true" class="python_scripting:execute_python" compatibility="8.2.000" expanded="true" height="103" name="Execute Python" width="90" x="447" y="136">
+            <parameter key="script" value="import pandas&#10;&#10;# rm_main is a mandatory function, &#10;# the number of arguments has to be the number of input ports (can be none)&#10;def rm_main(data):&#10;    print('Hello, world!')&#10;    # output can be found in Log View&#10;    print(type(data))&#10;&#10;    #your code goes here&#10;&#10;    #for example:&#10;    data2 = pandas.DataFrame([3,5,77,8])&#10;&#10;    # connect 2 output ports to see the results&#10;    return data, data2"/>
+          </operator>
+          <connect from_port="single" to_op="Execute Python" to_port="input 1"/>
+          <connect from_op="Open File" from_port="file" to_op="Execute Python" to_port="script file"/>
+          <connect from_op="Execute Python" from_port="output 1" to_port="output 1"/>
+          <portSpacing port="source_single" spacing="189"/>
+          <portSpacing port="sink_output 1" spacing="0"/>
+          <portSpacing port="sink_output 2" spacing="0"/>
+          <description align="center" color="yellow" colored="false" height="331" resized="true" width="350" x="326" y="17">this executes the rm_main function on the delivered set&lt;br&gt;&lt;br&gt;The result is written to $USER/.RapidMiner/python_results</description>
+          <description align="center" color="purple" colored="true" height="332" resized="true" width="317" x="10" y="18">Receive the Script we want to use</description>
+        </process>
+      </operator>
+      <connect from_op="Loop Repository" from_port="out 1" to_op="Loop Collection" to_port="collection"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <description align="center" color="blue" colored="true" height="241" resized="true" width="391" x="35" y="103">Picking Up the Topic Description Results for Various #Topics</description>
+      <description align="center" color="orange" colored="true" height="243" resized="true" width="382" x="422" y="102">Loop over results and write results files with python</description>
+    </process>
+  </operator>
+</process>
