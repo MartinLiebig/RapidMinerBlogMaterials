@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?><process version="9.0.003">
+<?xml version="1.0" encoding="UTF-8"?><process version="9.1.000-BETA2">
   <context>
     <input/>
     <output/>
     <macros/>
   </context>
-  <operator activated="true" class="process" compatibility="9.0.003" expanded="true" name="Process">
+  <operator activated="true" class="process" compatibility="9.1.000-BETA2" expanded="true" name="Process">
     <parameter key="logverbosity" value="init"/>
     <parameter key="random_seed" value="2001"/>
     <parameter key="send_mail" value="never"/>
@@ -12,7 +12,7 @@
     <parameter key="process_duration_for_mail" value="30"/>
     <parameter key="encoding" value="SYSTEM"/>
     <process expanded="true">
-      <operator activated="true" breakpoints="after" class="read_csv" compatibility="9.0.003" expanded="true" height="68" name="Read CSV" width="90" x="45" y="136">
+      <operator activated="true" breakpoints="after" class="read_csv" compatibility="9.1.000-BETA2" expanded="true" height="68" name="Read CSV" width="90" x="45" y="136">
         <parameter key="csv_file" value="C:\Users\MartinSchmitz\OneDrive - RapidMiner\Work\Internal Projects\Medium\Reviews.csv"/>
         <parameter key="column_separators" value=","/>
         <parameter key="trim_lines" value="false"/>
@@ -50,7 +50,7 @@
         <parameter key="datamanagement" value="double_array"/>
         <parameter key="data_management" value="auto"/>
       </operator>
-      <operator activated="true" class="sample" compatibility="9.0.003" expanded="true" height="82" name="Sample" width="90" x="246" y="136">
+      <operator activated="true" class="sample" compatibility="9.1.000-BETA2" expanded="true" height="82" name="Sample" width="90" x="246" y="136">
         <parameter key="sample" value="absolute"/>
         <parameter key="balance_data" value="false"/>
         <parameter key="sample_size" value="10000"/>
@@ -62,7 +62,7 @@
         <parameter key="use_local_random_seed" value="false"/>
         <parameter key="local_random_seed" value="1992"/>
       </operator>
-      <operator activated="true" class="remove_unused_values" compatibility="9.0.003" expanded="true" height="103" name="Remove Unused Values" width="90" x="447" y="85">
+      <operator activated="true" class="remove_unused_values" compatibility="9.1.000-BETA2" expanded="true" height="103" name="Remove Unused Values" width="90" x="447" y="85">
         <parameter key="return_preprocessing_model" value="false"/>
         <parameter key="create_view" value="false"/>
         <parameter key="attribute_filter_type" value="all"/>
@@ -79,10 +79,10 @@
         <parameter key="include_special_attributes" value="false"/>
         <parameter key="sort_alphabetically" value="true"/>
       </operator>
-      <operator activated="true" class="store" compatibility="9.0.003" expanded="true" height="68" name="Store (2)" width="90" x="581" y="238">
+      <operator activated="true" class="store" compatibility="9.1.000-BETA2" expanded="true" height="68" name="Store (2)" width="90" x="581" y="238">
         <parameter key="repository_entry" value="../data/raw data sampled"/>
       </operator>
-      <operator activated="true" class="store" compatibility="9.0.003" expanded="true" height="68" name="Store" width="90" x="581" y="85">
+      <operator activated="true" class="store" compatibility="9.1.000-BETA2" expanded="true" height="68" name="Store" width="90" x="581" y="85">
         <parameter key="repository_entry" value="../data/raw data sampled"/>
       </operator>
       <connect from_op="Read CSV" from_port="output" to_op="Sample" to_port="example set input"/>
@@ -95,7 +95,7 @@
       <description align="center" color="blue" colored="true" height="124" resized="false" width="315" x="388" y="212">Store the full version</description>
       <description align="center" color="orange" colored="true" height="275" resized="true" width="183" x="18" y="62">Read the File. &lt;br/&gt;Change the path to your local path!</description>
       <description align="center" color="yellow" colored="false" height="277" resized="true" width="196" x="200" y="61">Sample down to 10.000 rows</description>
-      <description align="center" color="purple" colored="true" height="109" resized="true" width="688" x="17" y="335">Process Reading the data from CSV, sampling it and storing both versions locally.&lt;br/&gt;&lt;br/&gt;The data is available at:&lt;br&gt;https://www.kaggle.com/snap/amazon-fine-food-reviews</description>
+      <description align="center" color="purple" colored="true" height="169" resized="true" width="685" x="17" y="335">Process Reading the data from CSV, sampling it and storing both versions locally.&lt;br&gt;&lt;br&gt;The data is available at:&lt;br&gt;https://www.kaggle.com/snap/amazon-fine-food-reviews&lt;br&gt;&lt;br&gt;You do not necesarrly read to run this process if you checked out the full repository. The repository holds the sampled data. You can run the full analysis on this!</description>
       <description align="center" color="yellow" colored="false" height="141" resized="true" width="305" x="713" y="62">The &amp;quot;Remove Unused Values&amp;quot; operator removes the unnecesarry texts from the meta data as well. This reduces the size by a lot.</description>
     </process>
   </operator>
