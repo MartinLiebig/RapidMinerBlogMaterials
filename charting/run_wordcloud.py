@@ -27,7 +27,7 @@ dumppath = os.path.join(resultfolder, "data.pickle")
 # writes: Files to the resultfolder path.
 # returns: data to work again on it in RM.
 #
-def rm_main(data, singleOutput=True, calledFromRM=True):
+def rm_main(data, singleOutput=False, calledFromRM=True):
     name = "Topic"
     if (calledFromRM is True):
         # do rm specific things
@@ -47,6 +47,7 @@ def rm_main(data, singleOutput=True, calledFromRM=True):
         d[topic][a] = x
 
     row, col = __getRowAndColSetting__(len(topics))
+    plt.subplots_adjust(hspace=0.1)
     # loop over the topics and create word clouds
     # if singleOutput is True, create one big clouds picture
     # otherwise create individual charts.
@@ -72,11 +73,11 @@ def rm_main(data, singleOutput=True, calledFromRM=True):
 # short helper function to get the number of rows and cols for a subplot
 # we always take 4 rows and then as many as needed cols.
 def __getRowAndColSetting__(nTopics):
-    row = 4
-    if nTopics % 4 == 0:
-        col = nTopics / 4
+    row = 3
+    if nTopics % 3 == 0:
+        col = nTopics / 3
     else:
-        col = nTopics / 4 + 1
+        col = nTopics / 3 + 1
     return row, col
 
 
