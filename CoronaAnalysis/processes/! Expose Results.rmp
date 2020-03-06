@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="9.7.000-ALPHA5">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="9.7.000-ALPHA5" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="retrieve" compatibility="9.7.000-ALPHA5" expanded="true" height="68" name="Retrieve latest scores" width="90" x="179" y="34">
+        <parameter key="repository_entry" value="../results/latest scores"/>
+      </operator>
+      <operator activated="true" class="write_excel" compatibility="9.7.000-ALPHA5" expanded="true" height="103" name="Write Excel" width="90" x="380" y="34">
+        <parameter key="file_format" value="xlsx"/>
+        <enumeration key="sheet_names"/>
+        <parameter key="sheet_name" value="RapidMiner Data"/>
+        <parameter key="date_format" value="yyyy-MM-dd HH:mm:ss"/>
+        <parameter key="number_format" value="#.0"/>
+        <parameter key="encoding" value="SYSTEM"/>
+      </operator>
+      <connect from_op="Retrieve latest scores" from_port="output" to_op="Write Excel" to_port="input"/>
+      <connect from_op="Write Excel" from_port="file" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+    </process>
+  </operator>
+</process>

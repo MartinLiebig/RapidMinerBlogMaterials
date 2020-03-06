@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="9.6.000">
+  <context>
+    <input>
+      <location>../data/current training data</location>
+    </input>
+    <output/>
+    <macros>
+      <macro>
+        <key>date</key>
+        <value>!now</value>
+      </macro>
+      <macro>
+        <key>basePath</key>
+        <value>C:\Users\MartinSchmitz\OneDrive - RapidMiner\Work\Marketing\Corona\</value>
+      </macro>
+    </macros>
+  </context>
+  <operator activated="true" class="process" compatibility="9.6.000" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="productivity:execute_process" compatibility="9.6.000" expanded="true" height="103" name="Execute AM DL Process" width="90" x="246" y="34">
+        <parameter key="process_location" value="subporcesses/AM DL Process"/>
+        <parameter key="use_input" value="true"/>
+        <parameter key="store_output" value="false"/>
+        <parameter key="propagate_metadata_recursively" value="true"/>
+        <parameter key="cache_process" value="true"/>
+        <list key="macros"/>
+        <parameter key="fail_for_unknown_macros" value="true"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.6.000" expanded="true" height="68" name="Store (5)" width="90" x="581" y="238">
+        <parameter key="repository_entry" value="../results/%{date}/detailed results"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.6.000" expanded="true" height="68" name="Store (6)" width="90" x="715" y="238">
+        <parameter key="repository_entry" value="../results/detailed results"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.6.000" expanded="true" height="68" name="Store" width="90" x="581" y="136">
+        <parameter key="repository_entry" value="../results/%{date}/performance"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.6.000" expanded="true" height="68" name="Store (2)" width="90" x="581" y="34">
+        <parameter key="repository_entry" value="../results/%{date}/model"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.6.000" expanded="true" height="68" name="Store (3)" width="90" x="715" y="34">
+        <parameter key="repository_entry" value="../results/latest model"/>
+      </operator>
+      <operator activated="true" class="store" compatibility="9.6.000" expanded="true" height="68" name="Store (4)" width="90" x="715" y="136">
+        <parameter key="repository_entry" value="../results/latest performance"/>
+      </operator>
+      <operator activated="true" class="performance_to_data" compatibility="9.6.000" expanded="true" height="82" name="Performance to Data" width="90" x="849" y="136"/>
+      <operator activated="true" class="write_excel" compatibility="9.6.000" expanded="true" height="103" name="Write Excel" width="90" x="983" y="136">
+        <parameter key="excel_file" value="%{basePath}%{date}_performance.xlsx"/>
+        <parameter key="file_format" value="xlsx"/>
+        <enumeration key="sheet_names"/>
+        <parameter key="sheet_name" value="RapidMiner Data"/>
+        <parameter key="date_format" value="yyyy-MM-dd HH:mm:ss"/>
+        <parameter key="number_format" value="#.0"/>
+        <parameter key="encoding" value="SYSTEM"/>
+      </operator>
+      <connect from_port="input 1" to_op="Execute AM DL Process" to_port="input 1"/>
+      <connect from_op="Execute AM DL Process" from_port="result 1" to_op="Store (2)" to_port="input"/>
+      <connect from_op="Execute AM DL Process" from_port="result 2" to_op="Store" to_port="input"/>
+      <connect from_op="Execute AM DL Process" from_port="result 3" to_op="Store (5)" to_port="input"/>
+      <connect from_op="Store (5)" from_port="through" to_op="Store (6)" to_port="input"/>
+      <connect from_op="Store" from_port="through" to_op="Store (4)" to_port="input"/>
+      <connect from_op="Store (2)" from_port="through" to_op="Store (3)" to_port="input"/>
+      <connect from_op="Store (3)" from_port="through" to_port="result 1"/>
+      <connect from_op="Store (4)" from_port="through" to_op="Performance to Data" to_port="performance vector"/>
+      <connect from_op="Performance to Data" from_port="example set" to_op="Write Excel" to_port="input"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="source_input 2" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="21"/>
+    </process>
+  </operator>
+</process>

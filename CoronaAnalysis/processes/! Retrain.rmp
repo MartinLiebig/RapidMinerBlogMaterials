@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="9.6.000">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="9.6.000" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="generate_macro" compatibility="9.6.000" expanded="true" height="82" name="Generate Macro" width="90" x="45" y="136">
+        <list key="function_descriptions">
+          <parameter key="date" value="date_str_custom(date_now(),&quot;dd_MM_yyyy hh_mm&quot;)"/>
+          <parameter key="basePath" value="&quot;C:\\Users\\MartinSchmitz\\OneDrive - RapidMiner\\Work\\Marketing\\Corona\\&quot;"/>
+        </list>
+        <description align="center" color="blue" colored="true" width="126">Generate the current date as timestamp. Used for write</description>
+      </operator>
+      <operator activated="true" class="productivity:execute_process" compatibility="9.6.000" expanded="true" height="82" name="Execute 01 - Update Data" width="90" x="179" y="136">
+        <parameter key="process_location" value="01 - Update Data"/>
+        <parameter key="use_input" value="true"/>
+        <parameter key="store_output" value="false"/>
+        <parameter key="propagate_metadata_recursively" value="true"/>
+        <parameter key="cache_process" value="true"/>
+        <list key="macros"/>
+        <parameter key="fail_for_unknown_macros" value="true"/>
+        <description align="center" color="blue" colored="true" width="126">Load new data from github and parse it.</description>
+      </operator>
+      <operator activated="true" class="productivity:execute_process" compatibility="9.6.000" expanded="true" height="82" name="Execute 02 - Prep Data" width="90" x="380" y="136">
+        <parameter key="process_location" value="02 - Prep Data"/>
+        <parameter key="use_input" value="true"/>
+        <parameter key="store_output" value="false"/>
+        <parameter key="propagate_metadata_recursively" value="true"/>
+        <parameter key="cache_process" value="true"/>
+        <list key="macros">
+          <parameter key="date" value="%{date}"/>
+          <parameter key="basePath" value="%{basePath}"/>
+        </list>
+        <parameter key="fail_for_unknown_macros" value="true"/>
+        <description align="center" color="blue" colored="true" width="126">Data Prep and Windowing. Results are also written to disc</description>
+      </operator>
+      <operator activated="true" class="productivity:execute_process" compatibility="9.6.000" expanded="true" height="68" name="Execute 03 - Modeling" width="90" x="581" y="34">
+        <parameter key="process_location" value="03 - Modeling"/>
+        <parameter key="use_input" value="true"/>
+        <parameter key="store_output" value="false"/>
+        <parameter key="propagate_metadata_recursively" value="true"/>
+        <parameter key="cache_process" value="true"/>
+        <list key="macros">
+          <parameter key="date" value="%{date}"/>
+          <parameter key="basePath" value="%{basePath}"/>
+        </list>
+        <parameter key="fail_for_unknown_macros" value="true"/>
+        <description align="center" color="green" colored="true" width="126">This is the modeling process of AutoModel / Go</description>
+      </operator>
+      <operator activated="true" class="delay" compatibility="9.6.000" expanded="true" height="103" name="Delay" width="90" x="782" y="136">
+        <parameter key="delay" value="fixed"/>
+        <parameter key="delay_amount" value="0"/>
+        <parameter key="min_delay_amount" value="0"/>
+        <parameter key="max_delay_amount" value="1000"/>
+        <description align="center" color="transparent" colored="false" width="126">Just to ensure modeling runs first</description>
+      </operator>
+      <operator activated="true" class="productivity:execute_process" compatibility="9.6.000" expanded="true" height="68" name="Execute 04 - Score" width="90" x="916" y="136">
+        <parameter key="process_location" value="04 - Score"/>
+        <parameter key="use_input" value="true"/>
+        <parameter key="store_output" value="false"/>
+        <parameter key="propagate_metadata_recursively" value="true"/>
+        <parameter key="cache_process" value="true"/>
+        <list key="macros">
+          <parameter key="date" value="%{date}"/>
+          <parameter key="basePath" value="%{basePath}"/>
+        </list>
+        <parameter key="fail_for_unknown_macros" value="true"/>
+        <description align="center" color="blue" colored="true" width="126">Runs the scoring of today's data</description>
+      </operator>
+      <connect from_op="Generate Macro" from_port="through 1" to_op="Execute 01 - Update Data" to_port="input 1"/>
+      <connect from_op="Execute 01 - Update Data" from_port="result 1" to_op="Execute 02 - Prep Data" to_port="input 1"/>
+      <connect from_op="Execute 01 - Update Data" from_port="result 2" to_op="Execute 02 - Prep Data" to_port="input 2"/>
+      <connect from_op="Execute 02 - Prep Data" from_port="result 1" to_op="Execute 03 - Modeling" to_port="input 1"/>
+      <connect from_op="Execute 02 - Prep Data" from_port="result 2" to_op="Delay" to_port="through 2"/>
+      <connect from_op="Execute 03 - Modeling" from_port="result 1" to_op="Delay" to_port="through 1"/>
+      <connect from_op="Delay" from_port="through 2" to_op="Execute 04 - Score" to_port="input 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <description align="center" color="red" colored="true" height="104" resized="true" width="147" x="14" y="316">Make sure to adapt the macro basePath which is defined in this operator!</description>
+    </process>
+  </operator>
+</process>
